@@ -3,6 +3,10 @@
 #First theme into Wordpress theme development
 /********************************************/
 
+#@includes part
+
+require get_template_directory() . '/bootstrap-navwalker.php';
+
 /*
  * GLOBAL functions features into my theme
  */
@@ -18,6 +22,9 @@ function add_styles_theme()
 {
     wp_enqueue_style('bootstrap-css', get_template_directory_uri() . "/css/bootstrap.min.css");
     wp_enqueue_style('material-css', get_template_directory_uri() . "/css/materialdesignicons.min.css");
+    wp_enqueue_style('slick-css', get_template_directory_uri() . "/css/slick.css");
+    wp_enqueue_style('slick-theme-css', get_template_directory_uri() . "/css/slick-theme.css");
+    wp_enqueue_style('style-css', get_template_directory_uri() . "/style.css");
     wp_enqueue_style('main-css', get_template_directory_uri() . "/css/main.css");
 }
 
@@ -33,24 +40,8 @@ function add_scripts_theme()
     // Included jQuery file into footer
     wp_enqueue_script('jquery');
     wp_enqueue_script('bootstrap-js', get_template_directory_uri() . "/js/bootstrap.min.js", array(), false, true);
-}
-
-function run_main_js()
-{
+    wp_enqueue_script('slick-js', get_template_directory_uri() . "/js/slick.min.js", array(), false, true);
     wp_enqueue_script('main-js', get_template_directory_uri() . "/js/main.js", array(), false, true);
-}
-
-//Create many menus with description
-
-function register_custom_menus()
-{
-    //Register Custom navbar menu
-    register_nav_menus(
-        array(
-            'header-menu' => __('Header navbar menu'),
-            'footer-menu' => __('Footer menu')
-        )
-    );
 }
 
 //Create location theme after set any function into location position into page
@@ -59,9 +50,11 @@ function header_menu()
 {
     wp_nav_menu(
         array(
-            'theme_location'    => 'header-menu',
-            'menu_class'        => 'navbar-header',
-            'container'         => false
+            'theme_location' => 'header-menu',
+            'menu_class' => 'navbar-nav',
+            'container' => false,
+            'depth' => 2,
+            'walker' => new Bootstrap_NavWalker()
         )
     );
 }
@@ -71,9 +64,22 @@ function footer_menu()
     wp_nav_menu(array('theme_location' => 'footer-menu'));
 }
 
+
+//Create many menus with description
+
+function register_custom_menus()
+{
+    //Register Custom navbar menu
+    register_nav_menus(
+        array(
+            'header-menu' => 'Header navbar menu',
+            'footer-menu' => 'Footer menu'
+        )
+    );
+}
+
 add_action('wp_enqueue_scripts', 'add_styles_theme');
 add_action('wp_enqueue_scripts', 'add_scripts_theme');
 add_action('init', 'register_custom_menus');
-add_action('init', 'run_main_js');
 
 
